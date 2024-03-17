@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+import ClientForm from "./components/ClientForm.vue";
+</script>
 
 <template>
   <div id="app">
@@ -7,10 +9,12 @@
     </header>
 
     <main>
-      <div class="container">main</div>
+      <div class="container">
+        <ClientForm />
+      </div>
     </main>
     <footer><div class="container">footer</div></footer>
   </div>
 </template>
 
-<style scoped></style>
+<style lang="sass" scoped></style>
