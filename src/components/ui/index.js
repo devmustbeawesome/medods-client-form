@@ -1,3 +1,5 @@
 import VButton from "@/components/UI/VButton.vue";
 import VInput from "@/components/UI/VInput.vue";
-export default [VInput, VButton];
+import VSelect from "@/components/UI/VSelect.vue";
+import VCheckbox from "@/components/UI/VCheckbox.vue";
+export default [VInput, VButton, VCheckbox, VSelect];

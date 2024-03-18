@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: "VInput",
+  name: "VCheckbox",
   props: {
     classList: { type: Object, required: false, default: () => ({}) },
     value: { type: String, required: true, default: "" },
@@ -49,12 +49,9 @@ export default {
 </script>
 
 <template>
-  <div class="form_input-wrapper">
-    <label class="form_input-label" :for="$id('v-input')">
-      <span>{{ label }}</span>
-    </label>
+  <label class="form_input-label">
+    <span>{{ label }}</span>
     <input
-      :id="$id('v-input')"
       v-if="type !== 'textarea'"
       ref="input"
       :type="newType"
@@ -70,7 +67,6 @@ export default {
     />
     <textarea
       v-else
-      :id="$id('v-input')"
       ref="textarea"
       :maxlength="maxlength"
       :value="computedValue"
@@ -82,33 +78,29 @@ export default {
       @blur="$emit('touch')"
       @focusout="$emit('touch')"
     />
-  </div>
+  </label>
 </template>
 
 <style lang="sass" scoped>
-.form_input-wrapper
+.form_input-label
   display: flex
   flex-direction: column
-  margin-bottom: 15px
-  .form_input-label
-    display: flex
-    flex-direction: column
-    margin-bottom: 5px
-    .input-error
-      border: 1px solid red
+  gap: 5px
+  .input-error
+    border: 1px solid red
 
+.form_input
+  background: none
+  padding: 10px 15px
+  border: 1px solid var(--color-border)
+  color: var(--color-text)
+  font-size: 18px
+  border-radius: 5px
+
+
+@media only screen and (max-width: 600px)
   .form_input
-    background: none
-    padding: 10px 15px
-    border: 1px solid var(--color-border)
-    color: var(--color-text)
-    font-size: 18px
-    border-radius: 5px
-
-
-  @media only screen and (max-width: 600px)
-    .form_input
-      font-size: 14px
-      padding: 8px 13px
-      border-radius: 4px
+    font-size: 14px
+    padding: 8px 13px
+    border-radius: 4px
 </style>
