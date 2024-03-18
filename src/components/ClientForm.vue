@@ -21,7 +21,7 @@ export default {
         birthDate: "",
         phone: "7",
         sex: "",
-        clientGroup: "",
+        clientGroup: [],
         attendingDoctor: "",
         sendSMS: "",
         address: {
@@ -159,7 +159,6 @@ export default {
           :options="['Иванов', 'Захаров', 'Чернышева']"
           :placeholder="'Attending doctor'"
           :label="'Attending doctor'"
-          :multiple="true"
         />
         <VCheckbox v-model="formData.sendSMS" :label="'Send SMS'" />
         <h2>Address</h2>

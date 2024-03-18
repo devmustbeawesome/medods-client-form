@@ -3,7 +3,7 @@ export default {
   name: "VSelect",
   props: {
     classList: { type: Object, required: false, default: () => ({}) },
-    value: { type: String, required: true, default: () => "" },
+    value: { type: [String, Number, Array], required: true, default: () => "" },
     name: { type: String, required: false, default: "select" + Date.now() },
     options: { type: Array, required: true, default: () => [] },
     label: { type: String, required: false, default: "" },
@@ -23,6 +23,9 @@ export default {
         return this.newValue;
       },
       set: function (value) {
+        if (!this.multiple) {
+          this.selectOpened = false;
+        }
         this.$emit("input", value);
       },
     },
@@ -67,8 +70,11 @@ export default {
 <template>
   <div
     class="form_select-wrapper"
-    @blur="selectOpened = false"
-    @focusout="selectOpened = false"
+    v-click-outside="
+      () => {
+        selectOpened = false;
+      }
+    "
   >
     <span class="form_select-label" @click="$refs.selectButton.focus()">{{
       label
@@ -85,7 +91,11 @@ export default {
         }
       "
     >
-      <span>{{ computedValue || placeholder }}</span>
+      <span>{{
+        Array.isArray(computedValue)
+          ? computedValue.join(", ") || placeholder
+          : computedValue || placeholder
+      }}</span>
     </button>
 
     <ul class="form_select-dialog" v-show="selectOpened">
@@ -93,13 +103,17 @@ export default {
         v-for="(option, index) in newOptions"
         :key="option"
         class="form_select-item"
+        @click.ctrl="
+          () => {
+            console.log('ctrl');
+          }
+        "
       >
         <input
           :id="$id('v-select-option-' + index)"
           :type="multiple ? 'checkbox' : 'radio'"
           :value="option"
           v-model="computedValue"
-          @change="onChange"
           :key="option"
           :name="name"
           class="form_select-option-input"
