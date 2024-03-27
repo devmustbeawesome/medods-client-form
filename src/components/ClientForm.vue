@@ -11,7 +11,7 @@ import { useVuelidate } from "@vuelidate/core";
 
 import VCheckbox from "./ui/VCheckbox.vue";
 const phoneRegex = helpers.regex(
-  /^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/
+  /^(\+7|7|8)?[\s-]?\(?[489][0-9]{2}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/
 );
 
 export default {
