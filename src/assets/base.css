@@ -34,6 +34,11 @@
   --color-text: var(--vt-c-text-light-1);
 
   --section-gap: 160px;
+
+  --error-color: red;
+  --success-color: green;
+  --warning-color: yellow;
+  --info-color: blue;
 }
 
 @media (prefers-color-scheme: dark) {

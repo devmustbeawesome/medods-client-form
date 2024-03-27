@@ -5,12 +5,14 @@ import {
   maxLength,
   minValue,
   helpers,
-  numeric,
+  // numeric,
 } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 
 import VCheckbox from "./ui/VCheckbox.vue";
-const phoneRegex = /^(?:\+?61|0)[2-478](?:[ -]?[0-9]){8}$/;
+const phoneRegex = helpers.regex(
+  /^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/
+);
 
 export default {
   name: "ClientForm",
@@ -26,7 +28,7 @@ export default {
         sex: "",
         clientGroup: [],
         attendingDoctor: "",
-        sendSMS: "",
+        sendSMS: false,
         address: {
           index: "",
           country: "",
@@ -56,9 +58,12 @@ export default {
         phone: {
           required,
           minLength: minLength(11),
-          maxLength: maxLength(11),
-          regex: helpers.regex(phoneRegex),
-          numeric,
+          maxLength: maxLength(12),
+          phoneRegex: helpers.withMessage(
+            "Check phone number format",
+            phoneRegex
+          ),
+          // numeric,
         }, // TODO
         sex: {},
         clientGroup: { required },
@@ -103,7 +108,12 @@ export default {
           v-model="formData.firstName"
           :placeholder="'firstName'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.firstName.$error }"
+          :is-valid="!v$.formData.firstName.$error"
+          :errorMessage="
+            v$.formData.firstName.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'First ame*'"
           :type="'text'"
           @touch="v$.formData.name.$touch"
@@ -112,7 +122,12 @@ export default {
           v-model="formData.name"
           :placeholder="'name'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.name.$error }"
+          :is-valid="!v$.formData.name.$error"
+          :errorMessage="
+            v$.formData.name.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Name*'"
           :type="'text'"
           @touch="v$.formData.name.$touch"
@@ -121,7 +136,12 @@ export default {
           v-model="formData.lastName"
           :placeholder="'Last name'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.lastName.$error }"
+          :is-valid="!v$.formData.lastName.$error"
+          :errorMessage="
+            v$.formData.lastName.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Last name'"
           :type="'text'"
           @touch="v$.formData.lastName.$touch"
@@ -130,7 +150,12 @@ export default {
           v-model="formData.birthDate"
           :placeholder="'birthDate'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.birthDate.$error }"
+          :is-valid="!v$.formData.birthDate.$error"
+          :errorMessage="
+            v$.formData.birthDate.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Birth date*'"
           :type="'text'"
           @touch="v$.formData.birthDate.$touch"
@@ -138,8 +163,13 @@ export default {
         <VInput
           v-model="formData.phone"
           :placeholder="'Phone'"
-          :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.phone.$error }"
+          :maxlength="12"
+          :is-valid="!v$.formData.phone.$error"
+          :errorMessage="
+            v$.formData.phone.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Phone'"
           :type="'text'"
           @touch="v$.formData.phone.$touch"
@@ -169,7 +199,12 @@ export default {
           v-model="formData.address.index"
           :placeholder="'Index'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.address.index.$error }"
+          :is-valid="!v$.formData.address.index.$error"
+          :errorMessage="
+            v$.formData.address.index.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Index'"
           :type="'text'"
           @touch="v$.formData.address.index.$touch"
@@ -178,7 +213,12 @@ export default {
           v-model="formData.address.country"
           :placeholder="'Country'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.address.country.$error }"
+          :is-valid="!v$.formData.address.country.$error"
+          :errorMessage="
+            v$.formData.address.country.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Country'"
           :type="'text'"
           @touch="v$.formData.address.country.$touch"
@@ -187,7 +227,12 @@ export default {
           v-model="formData.address.region"
           :placeholder="'Region'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.address.region.$error }"
+          :is-valid="!v$.formData.address.region.$error"
+          :errorMessage="
+            v$.formData.address.region.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Region'"
           :type="'text'"
           @touch="v$.formData.address.region.$touch"
@@ -196,7 +241,12 @@ export default {
           v-model="formData.address.city"
           :placeholder="'City'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.address.city.$error }"
+          :is-valid="!v$.formData.address.city.$error"
+          :errorMessage="
+            v$.formData.address.city.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'City*'"
           :type="'text'"
           @touch="v$.formData.address.city.$touch"
@@ -205,7 +255,12 @@ export default {
           v-model="formData.address.street"
           :placeholder="'Street'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.address.street.$error }"
+          :is-valid="!v$.formData.address.street.$error"
+          :errorMessage="
+            v$.formData.address.street.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Street'"
           :type="'text'"
           @touch="v$.formData.address.street.$touch"
@@ -214,7 +269,12 @@ export default {
           v-model="formData.address.house"
           :placeholder="'House'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.address.house.$error }"
+          :is-valid="!v$.formData.address.house.$error"
+          :errorMessage="
+            v$.formData.address.house.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'House'"
           :type="'text'"
           @touch="v$.formData.address.house.$touch"
@@ -225,7 +285,12 @@ export default {
           v-model="formData.passport.series"
           :placeholder="'Series'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.passport.series.$error }"
+          :is-valid="!v$.formData.passport.series.$error"
+          :errorMessage="
+            v$.formData.passport.series.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Series'"
           :type="'text'"
           @touch="v$.formData.passport.series.$touch"
@@ -234,7 +299,12 @@ export default {
           v-model="formData.passport.number"
           :placeholder="'Number'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.passport.number.$error }"
+          :is-valid="!v$.formData.passport.number.$error"
+          :errorMessage="
+            v$.formData.passport.number.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Number'"
           :type="'text'"
           @touch="v$.formData.passport.number.$touch"
@@ -243,7 +313,12 @@ export default {
           v-model="formData.passport.issuedBy"
           :placeholder="'Issued by'"
           :maxlength="20"
-          :class-list="{ 'input-error': v$.formData.passport.issuedBy.$error }"
+          :is-valid="!v$.formData.passport.issuedBy.$error"
+          :errorMessage="
+            v$.formData.passport.issuedBy.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Issued by'"
           :type="'text'"
           @touch="v$.formData.passport.issuedBy.$touch"
@@ -252,9 +327,12 @@ export default {
           v-model="formData.passport.issuedDate"
           :placeholder="'Issued date'"
           :maxlength="20"
-          :class-list="{
-            'input-error': v$.formData.passport.issuedDate.$error,
-          }"
+          :is-valid="!v$.formData.passport.issuedDate.$error"
+          :errorMessage="
+            v$.formData.passport.issuedDate.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
           :label="'Issued date'"
           :type="'text'"
           @touch="v$.formData.passport.issuedDate.$touch"
