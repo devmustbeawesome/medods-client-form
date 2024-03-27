@@ -3,11 +3,13 @@ export default {
   name: "VCheckbox",
   props: {
     classList: { type: Object, required: false, default: () => ({}) },
-    value: { type: String, required: true, default: "" },
+    value: { type: Boolean, required: true, default: false },
     type: { type: String, required: false, default: "text" },
     maxlength: { type: Number, required: false, default: 500 },
     label: { type: String, required: false, default: "" },
     placeholder: { type: String, required: false, default: "" },
+    errorMessage: { type: String, required: false, default: "" },
+    isValid: { type: Boolean, required: false, default: true },
   },
   data() {
     return {
@@ -52,7 +54,7 @@ export default {
   <div class="form_checkbox-wrapper">
     <input
       type="checkbox"
-      v-model="checked"
+      v-model="computedValue"
       :id="$id('v-checkbox')"
       class="form_checkbox-input"
     />

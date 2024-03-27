@@ -9,6 +9,8 @@ export default {
     label: { type: String, required: false, default: "" },
     placeholder: { type: String, required: false, default: "" },
     multiple: { type: Boolean, required: false, default: false },
+    errorMessage: { type: String, required: false, default: "" },
+    isValid: { type: Boolean, required: false, default: true },
   },
   data() {
     return {
