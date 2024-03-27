@@ -8,10 +8,13 @@ import {
   numeric,
 } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
+
+import VCheckbox from "./ui/VCheckbox.vue";
 const phoneRegex = /^(?:\+?61|0)[2-478](?:[ -]?[0-9]){8}$/;
 
 export default {
   name: "ClientForm",
+  components: { VCheckbox },
   data() {
     return {
       formData: {
@@ -164,7 +167,7 @@ export default {
         <h2>Address</h2>
         <VInput
           v-model="formData.address.index"
-          :placeholder="'/Index'"
+          :placeholder="'Index'"
           :maxlength="20"
           :class-list="{ 'input-error': v$.formData.address.index.$error }"
           :label="'Index'"
