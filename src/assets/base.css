@@ -66,8 +66,6 @@
 
 html {
   height: 100%;
-  margin-right: calc(-1 * (100vw - 100%));
-  overflow-x: hidden;
 }
 
 body {
@@ -76,6 +74,8 @@ body {
   background: var(--color-background);
   font-family: Roboto, sans-serif;
   display: block;
+  margin-right: calc(-1 * (100vw - 100%));
+  overflow-x: hidden;
 }
 
 #app {
