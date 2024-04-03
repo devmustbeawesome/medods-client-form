@@ -3,20 +3,20 @@ import {
   required,
   minLength,
   maxLength,
-  minValue,
   helpers,
   // numeric,
 } from "@vuelidate/validators";
+
 import { useVuelidate } from "@vuelidate/core";
 
-import VCheckbox from "./ui/VCheckbox.vue";
+import VModal from "./ui/VModal.vue";
 const phoneRegex = helpers.regex(
   /^(\+7|7|8)?[\s-]?\(?[489][0-9]{2}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/
 );
 
 export default {
   name: "ClientForm",
-  components: { VCheckbox },
+  components: { VModal },
   data() {
     return {
       formData: {
@@ -45,6 +45,8 @@ export default {
           issuedDate: "",
         },
       },
+      isModalActive: false,
+      isPendingForm: false,
     };
   },
   setup: () => ({ v$: useVuelidate() }),
@@ -54,7 +56,13 @@ export default {
         firstName: { required },
         name: { required },
         lastName: {},
-        birthDate: { required, minValue: minValue(new Date()) },
+        birthDate: {
+          required,
+          maxValue: helpers.withMessage(
+            "date cannot be in the future",
+            (value) => value < new Date().toISOString()
+          ),
+        },
         phone: {
           required,
           minLength: minLength(11),
@@ -82,18 +90,30 @@ export default {
           series: {},
           number: {},
           issuedBy: {},
-          issuedDate: { required, minValue: minValue(new Date()) },
+          issuedDate: {
+            required,
+            maxValue: helpers.withMessage(
+              "date cannot be in the future",
+              (value) => value < new Date().toISOString()
+            ),
+          },
         },
       },
     };
   },
   methods: {
     async onSubmit() {
-      const result = await this.v$.$validate();
-      if (!result) {
+      const validateResult = await this.v$.$validate();
+      if (!validateResult) {
         return;
       }
       console.log(this.formData);
+      this.isModalActive = true;
+      this.isPendingForm = true;
+      setTimeout(() => {
+        this.isPendingForm = false;
+      }, 2000);
+      this.$refs.clientCreatingForm.reset();
     },
   },
 };
@@ -102,7 +122,11 @@ export default {
 <template>
   <div class="client-form_wrapper">
     <h2 class="client-form_title">Client Form</h2>
-    <form class="client-form" @submit.prevent="onSubmit">
+    <form
+      class="client-form"
+      ref="clientCreatingForm"
+      @submit.prevent="onSubmit"
+    >
       <div class="client-form_input-wrapper">
         <VInput
           v-model="formData.firstName"
@@ -114,7 +138,7 @@ export default {
               ?.map((element) => element.$message)
               .join(', ')
           "
-          :label="'First ame*'"
+          :label="'First name*'"
           :type="'text'"
           @touch="v$.formData.name.$touch"
         />
@@ -157,7 +181,7 @@ export default {
               .join(', ')
           "
           :label="'Birth date*'"
-          :type="'text'"
+          :type="'date'"
           @touch="v$.formData.birthDate.$touch"
         />
         <VInput
@@ -179,21 +203,42 @@ export default {
           :options="['male', 'female']"
           :placeholder="'Sex'"
           :label="'Sex'"
+          :is-valid="!v$.formData.sex.$error"
+          :errorMessage="
+            v$.formData.sex.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
+          @touch="v$.formData.sex.$touch"
         />
         <VSelect
           v-model="formData.clientGroup"
           :options="['VIP', 'Проблемные', 'ОМС', 'Без группы']"
           :placeholder="'Client group'"
-          :label="'Client group'"
+          :label="'Client group*'"
           :multiple="true"
+          :is-valid="!v$.formData.clientGroup.$error"
+          :errorMessage="
+            v$.formData.clientGroup.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
+          @touch="v$.formData.clientGroup.$touch"
         />
         <VSelect
           v-model="formData.attendingDoctor"
           :options="['Иванов', 'Захаров', 'Чернышева']"
           :placeholder="'Attending doctor'"
           :label="'Attending doctor'"
+          :is-valid="!v$.formData.attendingDoctor.$error"
+          :errorMessage="
+            v$.formData.attendingDoctor.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
+          @touch="v$.formData.attendingDoctor.$touch"
         />
-        <VCheckbox v-model="formData.sendSMS" :label="'Send SMS'" />
+        <VFormAgreement v-model="formData.sendSMS" :label="'Send SMS'" />
         <h2>Address</h2>
         <VInput
           v-model="formData.address.index"
@@ -280,7 +325,24 @@ export default {
           @touch="v$.formData.address.house.$touch"
         />
         <h2>Passport</h2>
-        <!-- // TODO type -->
+        <VSelect
+          v-model="formData.passport.type"
+          :options="[
+            'Паспорт',
+            'Свидетельство о рождении',
+            'Вод. удостоверение',
+          ]"
+          :placeholder="'Choose document'"
+          :label="'Document type*'"
+          :multiple="false"
+          :is-valid="!v$.formData.passport.type.$error"
+          :errorMessage="
+            v$.formData.passport.type.$errors
+              ?.map((element) => element.$message)
+              .join(', ')
+          "
+          @touch="v$.formData.passport.type.$touch"
+        />
         <VInput
           v-model="formData.passport.series"
           :placeholder="'Series'"
@@ -333,19 +395,30 @@ export default {
               ?.map((element) => element.$message)
               .join(', ')
           "
-          :label="'Issued date'"
-          :type="'text'"
+          :label="'Issued date*'"
+          :type="'date'"
           @touch="v$.formData.passport.issuedDate.$touch"
         />
       </div>
       <VButton @click="onSubmit">Submit</VButton>
-      {{ formData }}
     </form>
-    <p v-for="(error, index) of v$.$errors" :key="index">
-      <strong>{{ error.$validator }}</strong>
-      <strong>{{ error.$property }}</strong>
-      <strong>{{ error.$message }}</strong>
-    </p>
+    <VModal :active.sync="isModalActive" :ableClose="false">
+      <template #content>
+        <div v-show="isPendingForm" class="modal-content">
+          <div class="client-form_title">Sending...</div>
+          <div class="loader"></div>
+        </div>
+        <div v-show="!isPendingForm" class="modal-content">
+          <div>Success</div>
+          <div>Client was created</div>
+        </div>
+      </template>
+      <template #footer>
+        <VButton @click="isModalActive = false" v-show="!isPendingForm"
+          >close</VButton
+        >
+      </template>
+    </VModal>
   </div>
 </template>
 
@@ -369,4 +442,31 @@ export default {
       display: flex
       flex-direction: column
       gap: 5px
+
+.loader
+  width: 48px
+  height: 48px
+  border: 5px solid #FFF
+  border-bottom-color: transparent
+  border-radius: 50%
+  display: inline-block
+  box-sizing: border-box
+  animation: rotation 1s linear infinite
+
+
+  @keyframes rotation
+    0%
+      transform: rotate(0deg)
+
+    100%
+      transform: rotate(360deg)
+
+.modal-content
+  display: flex
+  flex-direction: column
+  gap: 10px
+  align-items: center
+  justify-content: center
+  margin: 0 auto
+  padding: 20px
 </style>
