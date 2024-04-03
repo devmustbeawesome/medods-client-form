@@ -39,6 +39,11 @@ export default {
     type: function (options) {
       this.newOptions = options;
     },
+    selectOpened: function (value) {
+      if (!value) {
+        this.$emit("touch");
+      }
+    },
   },
   methods: {
     onChange: function (event) {
@@ -51,9 +56,6 @@ export default {
       if (this.selectOpened && (key === "Escape" || key === "Esc")) {
         this.selectOpened = false;
       }
-    },
-    log: function (event) {
-      console.log(event);
     },
   },
   beforeMount() {
@@ -85,6 +87,7 @@ export default {
       type="button"
       ref="selectButton"
       class="form_select-button"
+      :class="{ 'form_select-error': !isValid }"
       :id="$id('v-select-button')"
       @click.prevent="
         () => {
@@ -126,6 +129,9 @@ export default {
         </label>
       </li>
     </ul>
+    <span class="form_select-error-message" v-if="errorMessage">
+      {{ errorMessage }}
+    </span>
   </div>
 </template>
 
@@ -167,11 +173,13 @@ export default {
       right: 1rem
       z-index: 1
       margin-top: -3px
+  .form_select-error
+    border-color: var(--error-color)
 
   .form_select-dialog
     position: absolute
-    top: 100%
-    left: 0
+    // top: 100%
+    // left: 0
     width: 100%
     border: 1px solid var(--color-border)
     border-radius: 5px
@@ -215,4 +223,6 @@ export default {
       font-size: 14px
       padding: 8px 13px
       border-radius: 4px
+  .form_select-error-message
+    color: var(--error-color)
 </style>
