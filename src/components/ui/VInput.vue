@@ -83,7 +83,7 @@ export default {
       @blur="$emit('touch')"
       @focusout="$emit('touch')"
     />
-    <span class="input-error-message" v-if="!isValid">
+    <span class="input-error-message" v-if="errorMessage">
       {{ errorMessage }}
     </span>
   </div>
@@ -122,4 +122,10 @@ export default {
     margin-top: 5px
     font-weight: 500
     line-height: 1.2
+
+@media (prefers-color-scheme: dark)
+  input[type="date"], input[type="time"], input[type="datetime-local"]
+    color-scheme: dark
+    &::-webkit-calendar-picker-indicator
+      filter: invert(0.5)
 </style>

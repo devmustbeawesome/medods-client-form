@@ -3,18 +3,18 @@ export default {
   name: "VCheckbox",
   props: {
     classList: { type: Object, required: false, default: () => ({}) },
-    value: { type: Boolean, required: true, default: false },
-    type: { type: String, required: false, default: "text" },
+    value: { type: [Array, Boolean], required: true, default: () => [] },
+    checkboxValue: { type: String, required: false, default: "" },
     maxlength: { type: Number, required: false, default: 500 },
     label: { type: String, required: false, default: "" },
     placeholder: { type: String, required: false, default: "" },
     errorMessage: { type: String, required: false, default: "" },
     isValid: { type: Boolean, required: false, default: true },
+    disabled: { type: Boolean, required: false, default: false },
   },
   data() {
     return {
       newValue: this.value,
-      newType: this.type,
     };
   },
   computed: {
@@ -30,9 +30,6 @@ export default {
   watch: {
     value: function (value) {
       this.newValue = value;
-    },
-    type: function (type) {
-      this.newType = type;
     },
   },
   methods: {
@@ -55,8 +52,10 @@ export default {
     <input
       type="checkbox"
       v-model="computedValue"
+      :value="checkboxValue"
       :id="$id('v-checkbox')"
       class="form_checkbox-input"
+      :disabled="disabled"
     />
     <label :for="$id('v-checkbox')" class="form_checkbox">
       <div class="form_checkbox-icon"></div>
